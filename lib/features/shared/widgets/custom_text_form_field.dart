@@ -54,6 +54,8 @@ class CustomTextFormField extends StatelessWidget {
         keyboardType: keyboardType,
         style: const TextStyle( fontSize: 20, color: Colors.black54 ),
         decoration: InputDecoration(
+          fillColor: Colors.white,
+          filled: true,
           floatingLabelStyle: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18),
           enabledBorder: border,
           focusedBorder: border,
