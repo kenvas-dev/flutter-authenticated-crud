@@ -6,6 +6,7 @@ import '../infraestructure.dart';
 
 class AuthDatasourceImpl extends AuthDatasource {
   final httpClient = HttpAdapter.httpClient;
+  final String _path = '/auth';
 
   @override
   Future<User> checkAuthStatus(String token) {
@@ -17,7 +18,7 @@ class AuthDatasourceImpl extends AuthDatasource {
   Future<User> login(String email, String password) async {
     try {
       final response = await httpClient
-          .post('/auth/login', data: {'email': email, 'password': password});
+          .post('${_path}/login', data: {'email': email, 'password': password});
       final user = UserMapper.userJsonToEntity(response.data);
       return user;
     } on DioException catch (e) {
@@ -36,8 +37,24 @@ class AuthDatasourceImpl extends AuthDatasource {
   }
 
   @override
-  Future<User> register(String email, String password, String fullName) {
-    // TODO: implement register
-    throw UnimplementedError();
+  Future<User> register(String email, String password, String fullName) async {
+    try {
+      final response = await httpClient.post('${_path}/register',
+          data: {'email': email, 'password': password, 'fullName': fullName});
+      final user = UserMapper.userJsonToEntity(response.data);
+      return user;
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 400) {
+        throw CustomError(
+            errorMessage: e.response?.data['message'] ??
+                'Intenta con otra cuenta de correo electrónico');
+      }
+      if (e.type == DioExceptionType.connectionTimeout) {
+        throw CustomError(errorMessage: 'Revisar conexión a internet');
+      }
+      throw Exception();
+    } catch (e) {
+      throw Exception();
+    }
   }
 }

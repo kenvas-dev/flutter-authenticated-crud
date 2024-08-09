@@ -18,11 +18,20 @@ class AuthNotifier extends StateNotifier<AuthState> {
     } on CustomError catch (e) {
       logout(e.errorMessage);
     } catch (e) {
-      logout('Erro no controlado');
+      logout('Error no controlado');
     }
   }
 
-  void registerUser(String email, String password, String fullName) async {}
+  void registerUser(String email, String password, String fullName) async {
+    try {
+      final user = await authRepository.register(email, password, fullName);
+      _setLoggedUser(user);
+    } on CustomError catch (e) {
+      logout(e.errorMessage);
+    } catch (e) {
+      logout('Error no controlado');
+    }
+  }
 
   void checkAuthStatus() async {}
 
